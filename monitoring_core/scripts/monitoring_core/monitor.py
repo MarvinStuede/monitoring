@@ -102,7 +102,7 @@ class Monitor(object):
             rospy.logwarn("[%s] whitespaces are not allowed in monitoring keys!", self.node_name)
 	kv = KeyValue()
 	if (self.host_name + self.node_name) in self.aggregation_dict:
-	    if key in self.aggregation_dict[self.host_name + self.node_name]:
+            if key in self.aggregation_dict[self.host_name + self.node_name]:
 	        if aggregation(monitor_mode) == AggregationStrategies.AVG:
 		    if rospy.get_rostime() - self.aggregation_dict[self.host_name + self.node_name][key]['Duration'] < rospy.Duration(5):
 	                self.aggregatin_dict[self.host_name + self.node_name][key]['num'] += 1
@@ -133,13 +133,13 @@ class Monitor(object):
 	            kv.value = str(self.aggregation_dict[self.host_name + self.node_name][key]['Value'])
 	            kv.unit = str(unit)
 	            kv.errorlevel = errorlevel
-	        elif aggregation(monitor_mode) == AggregationStrategies.LAST:
+                elif aggregation(monitor_mode) == AggregationStrategies.LAST:
 	            kv.key = str(key)
 	            kv.value = str(value)
 	            kv.unit = str(unit)
 	            kv.errorlevel = errorlevel
 	        self.ma.info[0].values.append(kv)
-	    else:
+            else:
 	        self.aggregation_dict[self.host_name + self.node_name][key] = {'num' : 0 , 'Value' : 0, 'Sum' : 0, 'Duration' : rospy.get_rostime()}
 	        kv.key = str(key)
 	        kv.value = str(value)

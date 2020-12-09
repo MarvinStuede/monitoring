@@ -60,8 +60,8 @@ def nodemonitor():
 
         for node in nodes:
             if not rosnode_ping(node, 1):
-                rospy.logwarn("Can not ping node: %s", node)
-                monitor.addValue(node, "node unavailable", "", 0.5 , AggregationStrategies.LAST)
+                rospy.logwarn("Cannot ping node: %s", node)
+                monitor.addValue(node, "node unavailable", "", 1.0 , 1) # 1 as last argument for AggregationStrategies.LAST
 
 
         rate.sleep()
