@@ -2,13 +2,13 @@ frequency: 1
 topics: [{name: /monitoring, frequency: 2},
          {name: /base/laser/scan_filtered, frequency: 2},
          {name: /base/relayboard_v2/battery_state, frequency: 2},
-         {name: /base/relayboard_v2/emergency_stop_state, frequency: 2},
-         {name: /base/relayboard_v2/state, frequency: 2},
-         {name: /base/relayboard_v2/usboard/measurements, frequency: 2},
-         {name: /cam_back/color/camera_info, frequency: 2},
-         {name: /cam_front/color/camera_info, frequency: 2},
-         {name: /cmd_vel_safe, frequency: 2},
-         {name: /cmd_vel_us, frequency: 2},
+         {name: /base/relayboard_v2/emergency_stop_state, frequency: 45.2},
+         {name: /base/relayboard_v2/state, frequency: 45},
+         {name: /base/relayboard_v2/usboard/measurements, frequency: 45},
+         {name: /cam_back/color/camera_info, frequency: 30},
+         {name: /cam_front/color/camera_info, frequency: 30},
+
+
          {name: /diagnostics, frequency: 2},
          {name: /imu/data, frequency: 2},
          {name: /odom, frequency: 2},
@@ -16,3 +16,4 @@ topics: [{name: /monitoring, frequency: 2},
          {name: /velodyne_laserscan, frequency: 2},
 
 ]
+timeout: 4.0
