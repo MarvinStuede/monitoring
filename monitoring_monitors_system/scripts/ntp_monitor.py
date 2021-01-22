@@ -44,18 +44,16 @@ import rosnode
 
 if __name__ == '__main__':
     rospy.init_node('ntp_monitor', anonymous=True)
-    rate = rospy.Rate(10) # 10hz
+    rate = rospy.Rate(0.2)
     monitor = Monitor("ntp_monitor")
 
     ntp_servers = rospy.get_param('ntp_servers', rosnode.get_machines_by_nodes())
-    ntp_servers = ['10.42.0.1', '10.42.0.3', '10.42.0.2']
+    ntp_servers = ['10.42.0.2', '10.42.0.3', '10.42.0.4']
     offset_warn = rospy.get_param('abs_offset_warn', 1.0)
     offset_error = rospy.get_param('abs_offset_error', 5.0)
 
     ntp_client = ntplib.NTPClient()
     while not rospy.is_shutdown():
-        print("servers")
-        print(ntp_servers)
         for server in ntp_servers:
             try:
                 response = ntp_client.request(server)
