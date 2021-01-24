@@ -84,7 +84,7 @@ private:
   /**
    * @brief compareStatisticDataWithRequirements compares statisticData and topicRequirements
    */
-  void compareStatisticDataWithRequirements();
+  void compareStatisticDataWithRequirements(const ros::TimerEvent &e);
   void deleteOldMessages();
   ros::Subscriber stats_sub;  ///< subscirber for topic statistics
   Monitor *msg;   ///< msg that saves information that will be published
@@ -95,5 +95,6 @@ private:
   double timeTilDeletingOldMessages;
   AggregationStrategies aggregation;
   int monitor_mode;
+  ros::Timer timerCheck_;
 };
 #endif /* SRC_STATISTICSMONITOR_H_ */

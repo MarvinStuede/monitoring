@@ -6,17 +6,7 @@ StatisticMonitor::StatisticMonitor(ros::NodeHandle &n) {
   stats_sub = n.subscribe("/statistics", 1000, &StatisticMonitor::statisticsCallback, this);
   msg = new Monitor (n, "Statistics for ROS Topics" );
 
-  ros::Rate loop_rate(freq);
-  while(ros::ok()) {
-
-    // ROS_INFO("Statistics check");
-    compareStatisticDataWithRequirements();
-
-    //    std::vector<StatisticsInfo> newSD;
-    //    statisticData = newSD;
-    ros::spinOnce();
-    loop_rate.sleep();
-  }
+  timerCheck_ = n.createTimer(ros::Duration(1/freq), &StatisticMonitor::compareStatisticDataWithRequirements, this);
 }
 
 StatisticMonitor::~StatisticMonitor() {
@@ -33,7 +23,7 @@ void StatisticMonitor::deleteOldMessages() {
   }
 }
 
-void StatisticMonitor::compareStatisticDataWithRequirements() {
+void StatisticMonitor::compareStatisticDataWithRequirements(const ros::TimerEvent &e) {
   //  ROS_INFO("compare");
   deleteOldMessages();
   for(int i=0;i<topicRequirements.size(); i++) {
@@ -45,8 +35,12 @@ void StatisticMonitor::compareStatisticDataWithRequirements() {
     //    ROS_INFO("statisticData size: %d", statisticData.size());
     bool siFound = false;
     for(StatisticsInfo stin:statisticData) { //searching for coresponding recorded statistic data
-      //      ROS_INFO("COMPARE: %s, %s - %s, %s - %s, %s", stin.topic.c_str(), tr.topic.c_str(), stin.sub.c_str(), tr.destination.c_str(), stin.pub.c_str(), tr.source.c_str());
-      if(!(strcmp(stin.topic.c_str(),tr.topic.c_str())) && (strcmp(stin.sub.c_str(),tr.destination.c_str())) && (strcmp(stin.pub.c_str(),tr.source.c_str()))) {
+	    //      ROS_INFO("COMPARE: %s, %s - %s, %s - %s, %s", stin.topic.c_str(), tr.topic.c_str(), stin.sub.c_str(), tr.destination.c_str(), stin.pub.c_str(), tr.source.c_str());
+    bool topicFound=false, subFound=false, pubFound=false;
+    if (strcmp(stin.topic.c_str(),tr.topic.c_str())==0) topicFound=true;
+    if (strcmp(stin.sub.c_str(),tr.destination.c_str())==0) subFound=true;
+    if (strcmp(stin.pub.c_str(),tr.source.c_str())==0) pubFound=true;
+    if(topicFound && subFound && pubFound) {
         siFound = true;
         si = stin;
         break;
@@ -227,5 +221,6 @@ int main(int argc, char *argv[]) {
   ros::NodeHandle n("~");
 
   StatisticMonitor sm(n);
+  ros::spin(); 
   return 0;
 }
