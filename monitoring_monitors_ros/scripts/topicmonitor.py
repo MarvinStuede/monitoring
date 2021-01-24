@@ -124,7 +124,7 @@ def topicmonitor():
             #0.5 was actually 0.1 but the intervall can be bigger
             #if entry['frequency'] - 0.5*freq > freq:
             if 0.4*entry['frequency'] > freq:
-                rospy.logwarn("Frequency of %s is to low: Expected: %f Actual: %f", entry['name'], entry['frequency'], freq)
+                rospy.logwarn("Frequency of %s is too low: Expected: %f Actual: %f", entry['name'], entry['frequency'], freq)
                 value = "Topic " + entry['name'] + " is on " + str(freq) + "Hz, Expected: " +  str(entry['frequency'])
                 monitor.addValue(entry['name'], value, "", 1.0, 1)
 

@@ -1,6 +1,7 @@
-frequency: 1
-topics: [{name: /monitoring, frequency: 2},
-         {name: /base/laser/scan_filtered, frequency: 2},
+frequency: 0.2
+monitoring:
+        frequency: 0.2
+topics: [{name: /base/laser/scan_filtered, frequency: 2},
          {name: /base/relayboard_v2/battery_state, frequency: 2},
          {name: /base/relayboard_v2/emergency_stop_state, frequency: 45.2},
          {name: /base/relayboard_v2/state, frequency: 45},
