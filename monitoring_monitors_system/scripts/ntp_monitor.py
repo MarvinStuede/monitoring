@@ -47,10 +47,10 @@ if __name__ == '__main__':
     rate = rospy.Rate(0.2)
     monitor = Monitor("ntp_monitor")
 
-    ntp_servers = rospy.get_param('ntp_servers', rosnode.get_machines_by_nodes())
-    ntp_servers = ['10.42.0.2', '10.42.0.3', '10.42.0.4']
-    offset_warn = rospy.get_param('abs_offset_warn', 1.0)
-    offset_error = rospy.get_param('abs_offset_error', 5.0)
+    ntp_servers = rospy.get_param('~ntp_servers', rosnode.get_machines_by_nodes())
+    print("NTP Servers: ", ntp_servers)
+    offset_warn = rospy.get_param('~abs_offset_warn', 1.0)
+    offset_error = rospy.get_param('~abs_offset_error', 5.0)
 
     ntp_client = ntplib.NTPClient()
     while not rospy.is_shutdown():
