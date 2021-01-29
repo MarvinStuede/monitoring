@@ -34,15 +34,46 @@
 import rospy
 from rosnode import *
 from monitoring_msgs.msg import *
+from monitoring_msgs.srv import *
 from monitoring_core.monitor import Monitor
 from monitoring_core.monitor import AggregationStrategies
+from threading import Lock
+frequency = 1.0
+nodes = set()
+mutex = Lock()
+
+
+def cb_set_parameters(req):
+    global frequency, nodes
+    mutex.acquire()
+
+    try:
+        if req.frequency > 0:
+            frequency = req.frequency
+        if req.param_server_name[0] == '/':
+            nodes = set(req.param_server_name)
+        else:
+            nodes = set(rospy.get_param(rospy.get_name() + '/' + req.param_server_name))
+        params_set = True
+    except KeyError as e:
+        rospy.logerr("Node monitor params not set: " + e.message())
+        params_set = False
+
+
+    mutex.release()
+    return SetParametersResponse(params_set)
 
 
 def nodemonitor():
+    global frequency, nodes
     rospy.init_node("nodemonitor")
+    set_param_serv = rospy.Service(rospy.get_name() + '/set_parameters', SetParameters, cb_set_parameters)
     try:
+        mutex.acquire()
         frequency = rospy.get_param(rospy.get_name() + '/frequency')
         nodes = set(rospy.get_param(rospy.get_name() + '/nodes'))
+
+        mutex.release()
     except KeyError:
         print "value not set"
         quit()
@@ -57,14 +88,14 @@ def nodemonitor():
         #currentNodes = set(get_node_names())
         #if(not nodes.issubset(currentNodes)):
         #    rospy.logwarn("missing nodes!")
-
+        mutex.acquire()
         for node in nodes:
             if not rosnode_ping(node, 1):
                 rospy.logwarn("Cannot ping node: %s", node)
                 monitor.addValue(node, "node unavailable", "", 1.0 , 1) # 1 as last argument for AggregationStrategies.LAST
             else:
                 monitor.addValue(node, "node available", "", 0.0 , 1) # 1 as last argument for AggregationStrategies.LAST
-
+        mutex.release()
         rate.sleep()
 
 

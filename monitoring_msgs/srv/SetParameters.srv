@@ -1,0 +1,5 @@
+string param_server_name
+string[] param_array
+float32 frequency
+---
+bool params_set

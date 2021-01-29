@@ -20,6 +20,11 @@ add_message_files(
   Processes.msg
 )
 
+add_service_files(
+    FILES
+    SetParameters.srv
+)
+
 generate_messages(
   DEPENDENCIES
     std_msgs
