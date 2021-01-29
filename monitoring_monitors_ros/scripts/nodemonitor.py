@@ -42,7 +42,6 @@ frequency = 1.0
 nodes = set()
 mutex = Lock()
 
-
 def cb_set_parameters(req):
     global frequency, nodes
     mutex.acquire()
@@ -59,7 +58,7 @@ def cb_set_parameters(req):
         rospy.logerr("Node monitor params not set: " + e.message())
         params_set = False
 
-
+    rospy.set_param(rospy.get_name() + '/params_set', params_set)
     mutex.release()
     return SetParametersResponse(params_set)
 
@@ -67,6 +66,8 @@ def cb_set_parameters(req):
 def nodemonitor():
     global frequency, nodes
     rospy.init_node("nodemonitor")
+
+    rospy.set_param(rospy.get_name() + '/params_set', False)
     set_param_serv = rospy.Service(rospy.get_name() + '/set_parameters', SetParameters, cb_set_parameters)
     try:
         mutex.acquire()
