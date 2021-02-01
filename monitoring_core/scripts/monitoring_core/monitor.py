@@ -35,6 +35,7 @@ import socket
 import rospy
 from monitoring_msgs.msg import *
 from enum import Enum
+from threading import Lock
 
 class AggregationStrategies(Enum):
 	LAST = 1
@@ -53,7 +54,7 @@ class Monitor(object):
         mi.name = self.host_name + self.node_name
         mi.description = self.description
         self.ma.info.append(mi)
-
+        self.info_lock = Lock()
         self.is_initialised = False
         self.autoPublishing = autoPublishing
 
@@ -138,20 +139,26 @@ class Monitor(object):
 	            kv.value = str(value)
 	            kv.unit = str(unit)
 	            kv.errorlevel = errorlevel
-	        self.ma.info[0].values.append(kv)
+	        self.info_lock.acquire()
+                self.ma.info[0].values.append(kv)
+                self.info_lock.release()
             else:
 	        self.aggregation_dict[self.host_name + self.node_name][key] = {'num' : 0 , 'Value' : 0, 'Sum' : 0, 'Duration' : rospy.get_rostime()}
 	        kv.key = str(key)
 	        kv.value = str(value)
 	        kv.unit = str(unit)
 	        kv.errorlevel = errorlevel
+                self.info_lock.acquire()
 	        self.ma.info[0].values.append(kv)
+                self.info_lock.release()
 
     def publish(self):
         self.ma.header.stamp = rospy.Time.now()
         self.ma.info[0].header.stamp = rospy.Time.now()
         self.pub.publish(self.ma)
+        self.info_lock.acquire()
         self.resetMsg()
+        self.info_lock.release()
 
     def resetMsg(self):
         self.ma = MonitoringArray()
